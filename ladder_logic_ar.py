@@ -3,8 +3,11 @@ import cv2.aruco as aruco
 
 #Inicializacion de la cámara y diccionario ArUco
 cap = cv2.VideoCapture(0)
-aruco_dict = aruco.Dictionary_get(aruco.DICT_6X6_250)
-parameters = aruco.DetectorParameters_create()
+parameters = aruco.DetectorParameters()
+aruco_dict = aruco.getPredefinedDictionary(aruco.DICT_6X6_250)
+#aruco_dict = cv2.aruco.Dictionary(aruco.DICT_6X6_250)
+#aruco_dict = aruco.Dictionary_get(aruco.DICT_6X6_250)
+#parameters = aruco.DetectorParameters_create()
 
 #Estados iniciales
 E_0_0 = False
@@ -13,7 +16,7 @@ A_4_0 = False
 
 while True:
     ret,frame = cap.read()
-    gray = cv2.ctvColor(frame, cv2.COLOR_BGR2GRAY)
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
     #detectar marcadores
     corners, ids, _ = aruco.detectMarkers(gray, aruco_dict, parameters = parameters)
@@ -39,10 +42,9 @@ while True:
     #Mostrar los marcadores detectados
     aruco.drawDetectedMarkers(frame, corners, ids)
 
-    #mostrar la imagen en pantalla
-    cv2.imshow('Diagrama en escalera AR', frame)
-
-    if cv2.waitkey(1) & 0xFF == ord('q'):
+ #Mostrar la imagen con los FPS
+    cv2.imshow("Deteccion de manos",frame)
+    if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
 cap.release()
