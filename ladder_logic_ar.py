@@ -15,6 +15,10 @@ aruco_dict = aruco.getPredefinedDictionary(aruco.DICT_6X6_250)
 #Cargar la imagen que deseo proyectar
 overlay1 = cv2.imread("imagen001.png")
 overlay2 = cv2.imread("imagen002.png")
+overlay3 = cv2.imread("imagen003.png")
+
+#Variable de escala
+ESCALA = 0.5
 
 #Estados iniciales
 E_0_0 = False
@@ -42,6 +46,24 @@ while True:
                 overlay = overlay1
             elif marker_id == 1:
                 overlay = overlay2
+            elif marker_id == 2:
+                new_width = int(frame.shape[1] * ESCALA)
+                new_height = int(frame.shape[0] * ESCALA)
+                overlay = cv2.resize(overlay3, (new_width, new_height)) 
+                # Ajustar las nuevas esquinas de la imagen grande
+                pts_src = np.array([[0, 0], [new_width, 0], 
+                                    [new_width, new_height], [0, new_height]], dtype="float32")
+
+                # Mover la imagen más grande hacia la esquina superior izquierda del marcador
+                offset_x = int(pts_dst[0][0] - new_width / 8)
+                offset_y = int(pts_dst[0][1] - new_height / 8)
+                pts_dst = np.array([
+                    [offset_x, offset_y],
+                    [offset_x + new_width, offset_y],
+                    [offset_x + new_width, offset_y + new_height],
+                    [offset_x, offset_y + new_height]
+                ], dtype="float32")
+                #overlay = cv2.resize(overlay3, (frame.shape[1], frame.shape[0]))
             else:
                 continue
 
@@ -94,6 +116,5 @@ while True:
 
 cap.release()
 cv2.destroyAll
-
 
 
